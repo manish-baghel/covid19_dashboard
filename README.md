@@ -4,5 +4,5 @@
 	- Global Map for current cases [Incomplete]
 
 
-![Dashboard](https://raw.githubusercontent.com/manish-baghel/covid19_dashboard/master/screen1.png)
-![Dashboard](https://raw.githubusercontent.com/manish-baghel/covid19_dashboard/master/screen2.png)
+![Dashboard](https://github.com/manish-baghel/covid19_dashboard/blob/master/screen1.png?raw=true)
+![Dashboard](https://github.com/manish-baghel/covid19_dashboard/blob/master/screen2.png?raw=true)
