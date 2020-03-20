@@ -2,7 +2,6 @@ import Chart from 'chart.js';
 import feather from 'feather-icons';
 import Tabulator from 'tabulator-tables';
 import './data.ts';
-
 import csv from 'csvtojson';
 
 const ls = window.localStorage;
@@ -219,9 +218,48 @@ async function plotGraph(){
       }
     }
   });
+  global.myChart = myChart;
 }
 
-function buildTable(tcases,tdeaths,ncases,ndeaths){
+
+let linbtn = document.getElementById("linearScale");
+let logbtn = document.getElementById("logScale");
+
+linbtn.addEventListener("click", () => {
+  let chart = global.myChart;
+  logbtn.classList.remove("active");
+  linbtn.classList.add("active");
+  chart.options.scales.yAxes[0] = {
+      type: 'linear'
+  };
+  chart.update();
+});
+
+logbtn.addEventListener("click", () => {
+  let chart = global.myChart;
+  logbtn.classList.add("active");
+  linbtn.classList.remove("active");
+  chart.options.scales.yAxes[0] = {
+      type: 'logarithmic'
+  };
+  chart.update();
+});
+
+
+
+
+
+
+
+
+
+// Table related functions
+
+function buildTable(){
+  let tcases = JSON.parse(ls.getItem('tcases')),
+    tdeaths = JSON.parse(ls.getItem('tdeaths')),
+    ncases = JSON.parse(ls.getItem('ncases')),
+    ndeaths = JSON.parse(ls.getItem('ndeaths'));
   let countries = Object.keys(tcases[0]).filter(e => e!=='date')
   let lastIndex = tcases.length - 1;
   let dataArray = []
@@ -267,7 +305,7 @@ function buildTable(tcases,tdeaths,ncases,ndeaths){
 
 
 
-(function () {
+(async function () {
   'use strict'
 
   feather.replace()
@@ -280,5 +318,6 @@ function buildTable(tcases,tdeaths,ncases,ndeaths){
       ls.clear();
     }
   }
-  plotGraph()
+  await plotGraph();
+  buildTable();
 }())

@@ -28,6 +28,9 @@ body {
   text-align: center;
   font-size: 1.5rem!important;
 }
+.navbar.bg-dark{
+	background-color:#b70000 !important;
+}
 
 .sidebar-sticky {
   position: relative;
@@ -36,6 +39,9 @@ body {
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  .nav-link.active{
+  	color: rgb(183, 0, 0)!important;
+  }
 }
 
 @supports ((position: -webkit-sticky) or (position: sticky)) {
@@ -113,4 +119,21 @@ body {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+
+a.kofi-button {
+	position:fixed;
+	bottom:0;
+	left:0;
+	z-index:1000;
+}
+
+
+#linearScale{
+	box-shadow: none!important;
+}
+
+#logScale{
+	box-shadow: none!important;
 }
