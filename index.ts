@@ -3,6 +3,8 @@ import feather from 'feather-icons';
 import Tabulator from 'tabulator-tables';
 import './data.ts';
 import csv from 'csvtojson';
+import Datamap from 'datamaps';
+import * as d3 from 'd3';
 
 const ls = window.localStorage;
 
@@ -12,6 +14,8 @@ const new_confirmed_cases_uri = "https://covid.ourworldindata.org/data/ecdc/new_
 const new_deaths_uri = "https://covid.ourworldindata.org/data/ecdc/new_deaths.csv";
 
 let total_cases = []
+
+// fetch Data from apis
 
 async function getData(){
     return Promise.all([
@@ -109,7 +113,6 @@ async function getData(){
         
       });
 }
-
 
 
 // Graphs
@@ -221,6 +224,64 @@ async function plotGraph(){
   global.myChart = myChart;
 }
 
+// Data Maps
+function generateWorldMap(){
+  let elem = document.getElementById('world-map-container');
+  if(elem.children.length==0){
+    var wmap = new Datamap({
+      element: elem
+    });
+  }
+}
+
+
+function generateIndia(){
+  let elem = document.getElementById('india-map-container');
+  if(elem.children.length==0){
+    var indmap = new Datamap({
+      element: elem,
+      scope: 'india',
+      geographyConfig: {
+          popupOnHover: true,
+          highlightOnHover: true,
+          borderColor: '#444',
+          borderWidth: 0.5,
+          dataUrl: 'https://rawgit.com/Anujarya300/bubble_maps/master/data/geography-data/india.topo.json'
+          //dataJson: topoJsonData
+      },
+      fills: {
+          'MAJOR': '#306596',
+          'MEDIUM': '#0fa0fa',
+          'MINOR': '#bada55',
+          defaultFill: '#dddddd'
+      },
+      data: {
+          'JH': { fillKey: 'MINOR' },
+          'MH': { fillKey: 'MINOR' }
+      },
+      setProjection: function (element) {
+          var projection = d3.geoMercator()
+              .center([78.9629, 23.5937]) // always in [East Latitude, North Longitude]
+              .scale(1000);
+          var path = d3.geoPath().projection(projection);
+          return { path: path, projection: projection };
+      }
+    });
+  }
+}
+
+function generateUsa(){
+  let elem = document.getElementById('usa-map-container');
+  if(elem.children.length==0){
+    var usmap = new Datamap({
+      element:elem,
+      scope:'usa'
+    });
+  }
+}
+
+
+// Event Listeners
 
 let linbtn = document.getElementById("linearScale");
 let logbtn = document.getElementById("logScale");
@@ -245,12 +306,87 @@ logbtn.addEventListener("click", () => {
   chart.update();
 });
 
+function routeHelper(elem){
+  let main = document.getElementById("main");
+  let children = Array.from(main.children);
+  children = children.filter(k => k!=elem);
+  for(let child of children){
+    child.classList.remove("d-flex")
+    child.classList.add("d-none");
+  }
+  if(!elem.id=="chart-container") elem.classList.add("d-flex");
+}
 
+function listHelper(ev){
+  let e = document.getElementById("link-list");
+  let elem = ev.target.parentNode;
+  let children = Array.from(e.children);
+  children = children.filter(k => k!=elem);
+  for(let child of children){
+    child.children[0].classList.remove("active");
+  }
+  elem.children[0].classList.add("active");
+}
 
+async function chartHelper(){
+  if(ls.getItem('updated_at')){
+    let ut = ls.getItem('updated_at');
+    let ct = Date.now();
+    let diff = 60*60*1000;
+    if(ct - parseInt(ut) > diff){
+      console.log("Clearing ls");
+      ls.clear();
+    }
+  }
+  await plotGraph();
+  buildTable();
+}
 
+let dashbtn = document.getElementById('dashbtn');
+let worldbtn = document.getElementById('worldbtn');
+let abtbtn = document.getElementById('abtbtn');
+let indbtn = document.getElementById('indbtn');
+let usabtn = document.getElementById('usabtn');
 
+worldbtn.addEventListener("click",(ev) => {
+  let elem = document.getElementById("world-map-container");
+  routeHelper(elem);
+  listHelper(ev);
+  if(elem.classList.contains("d-none")){
+    elem.classList.remove("d-none");
+    generateWorldMap();
+  }
+});
 
+dashbtn.addEventListener("click",(ev) => {
+  let elem = document.getElementById("chart-container");
+  routeHelper(elem);
+  listHelper(ev);
+  if(elem.classList.contains("d-none")){
+    elem.classList.remove("d-none");
+    chartHelper();
+  }
+});
 
+indbtn.addEventListener("click",(ev) => {
+  let elem = document.getElementById("india-map-container");
+  routeHelper(elem);
+  listHelper(ev);
+  if(elem.classList.contains("d-none")){
+    elem.classList.remove("d-none");
+    generateIndia();
+  }
+});
+
+usabtn.addEventListener("click",(ev) => {
+  let elem = document.getElementById("usa-map-container");
+  routeHelper(elem);
+  listHelper(ev);
+  if(elem.classList.contains("d-none")){
+    elem.classList.remove("d-none");
+    generateUsa();
+  }
+});
 
 
 // Table related functions
@@ -303,21 +439,10 @@ function buildTable(){
 
 
 
-
-
+// on document load IIFE
 (async function () {
   'use strict'
 
-  feather.replace()
-  if(ls.getItem('updated_at')){
-    let ut = ls.getItem('updated_at');
-    let ct = Date.now();
-    let diff = 60*60*1000;
-    if(ct - parseInt(ut) > diff){
-      console.log("Clearing ls");
-      ls.clear();
-    }
-  }
-  await plotGraph();
-  buildTable();
+  feather.replace();
+  chartHelper();
 }())
