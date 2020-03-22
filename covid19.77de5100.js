@@ -106555,21 +106555,15 @@ function generateWorldMap() {
               data: dataset,
               geographyConfig: {
                 borderColor: '#444',
-                highlightBorderWidth: 2 // don't change color on mouse hover
-                ,
-                // don't change color on mouse hover
+                highlightBorderWidth: 2,
                 highlightFillColor: function highlightFillColor(geo) {
                   return geo['fillColor'] || '#F5F5F5';
                 },
-                // only change border
                 highlightBorderColor: '#444',
-                // show desired information in tooltip
                 popupTemplate: function popupTemplate(geo, data) {
-                  // don't show tooltip if country don't present in dataset
                   if (!data) {
                     return ['<div class="hoverinfo">', '<strong>', geo.properties.name, '</strong>', '</div>'].join('');
-                  } // tooltip content
-
+                  }
 
                   return ['<div class="hoverinfo">', '<strong>', geo.properties.name, '</strong>', '<br>Count: <strong>', data.numberOfThings, '</strong>', '</div>'].join('');
                 }
