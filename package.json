@@ -10,11 +10,6 @@
   "author": "manish-baghel",
   "license": "ISC",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.12.1",
-    "bootstrap": "^4.4.1",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.1",
-    "sass": "^1.26.3",
     "typescript": "^3.8.3"
   },
   "dependencies": {
@@ -28,6 +23,11 @@
     "parcel-bundler": "^1.12.4",
     "tabulator-tables": "^4.5.3",
     "topojson": "^3.0.2",
-    "topojson-client": "^3.1.0"
+    "topojson-client": "^3.1.0",
+    "@fortawesome/fontawesome-free": "^5.12.1",
+    "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1",
+    "popper.js": "^1.16.1",
+    "sass": "^1.26.3"
   }
 }
