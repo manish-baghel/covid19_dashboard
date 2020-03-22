@@ -1,40 +1,42 @@
-// import csv from 'csvtojson';
+import fs from "fs";
 
-// const total_cases_uri = "https://covid.ourworldindata.org/data/ecdc/total_cases.csv";
-// const total_deaths_uri = "https://covid.ourworldindata.org/data/ecdc/total_deaths.csv";
-// const new_confirmed_cases_uri = "https://covid.ourworldindata.org/data/ecdc/new_cases.csv";
-// const new_deaths_uri = "https://covid.ourworldindata.org/data/ecdc/new_deaths.csv";
+const ls = window.localStorage;
 
-// let total_cases = []
+export async function getJson(){
+	let json = await fetch("https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/slim-3/slim-3.json").
+		then(resp => resp.json());
+	return json;
+}
 
-// fetch(total_cases_uri)
-// 	.then(resp => {
-// 		const reader = resp.body.getReader();
-// 		return new ReadableStream({
-// 		    start(controller){
-// 		      return pump();
-// 		      function pump(){
-// 		        return reader.read().then(({ done, value }) => {
-// 		          // When no more data needs to be consumed, close the stream
-// 		          if (done) {
-// 		              controller.close();
-// 		              return;
-// 		          }
-// 		          // Enqueue the next data chunk into our target stream
-// 		          controller.enqueue(value);
-// 		          return pump();
-// 		        });
-// 		      }
-// 		    }  
-// 		  })
-// 	})
-// 	.then(stream => new Response(stream))
-// 	.then(response => response.blob())
-// 	.then(blob => blob.text())
-// 	.then(text => {
-// 		csv()
-// 			.fromString(text)
-// 			.then(jsonObj => {
-// 				console.log(jsonObj);
-// 			})
-// 	});
+
+export async function makeDictionary(){
+	let cdict = {};
+	let cobj = await getJson();
+	for(var country of cobj){
+		let name = country.name;
+		let id = country["alpha-3"];
+		if(name.trim().toLowerCase()=="united states of america") name = "united states";
+		else if(name.trim().toLowerCase()=="russian federation") name = "russia";
+		else if(name.trim().toLowerCase()=="united kingdom of great britain and northern ireland") name = "united kingdom";
+		else if(name.trim().toLowerCase()=="bolivia (plurinational state of)") name = "bolivia"; 
+		cdict[name.trim().toLowerCase()] = id;
+	}
+	return cdict;
+}
+
+export async function getCountrySeries(){
+	let dict = await makeDictionary();
+	console.log(dict);
+	let tcases = JSON.parse(ls.getItem("tcases"));
+	// console.log("tcases in getCountrySeries", tcases);
+	let countries = Object.keys(tcases[0]).filter(e => (e!=='date' && e!=='World'))
+	let lastIndex = tcases.length - 1;
+	let series = []
+	for(let c of countries){
+		let value = tcases[lastIndex][c];
+		let id = dict[c.trim().toLowerCase()]
+		// console.log(value,id);
+		series.push([id,value])
+	}
+	return series;
+}

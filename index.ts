@@ -1,7 +1,7 @@
 import Chart from 'chart.js';
 import feather from 'feather-icons';
 import Tabulator from 'tabulator-tables';
-import './data.ts';
+import * as data from './data.ts';
 import csv from 'csvtojson';
 import Datamap from 'datamaps';
 import * as d3 from 'd3';
@@ -225,12 +225,61 @@ async function plotGraph(){
 }
 
 // Data Maps
-function generateWorldMap(){
-  let elem = document.getElementById('world-map-container');
-  if(elem.children.length==0){
-    var wmap = new Datamap({
-      element: elem
+async function generateWorldMap(){
+  let series = await data.getCountrySeries();
+  var dataset = {};
+    var onlyValues = series.map(function(obj){ return obj[1]; });
+    var minValue = Math.min.apply(null, onlyValues),
+            maxValue = Math.max.apply(null, onlyValues);
+
+
+    var paletteScale = d3.scaleLinear()
+            .domain([minValue,maxValue])
+            .range(["#FDF0D9","#AA261E"); // red color
+    window.pscale = paletteScale;
+
+    // fill dataset in appropriate format
+    series.forEach(function(item){ //
+        // item example value ["USA", 70]
+        var iso = item[0],
+                value = item[1];
+        dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
     });
+  let elem = document.getElementById('world-map-container');
+  console.log(dataset);
+  if(elem.children.length==0){
+    let wmap = new Datamap({
+        element: elem,
+        projection: 'mercator', // big world map
+        fills: { defaultFill: '#F5F5F5' },
+        responsive:true,
+        data: dataset,
+        geographyConfig: {
+            borderColor: '#444',
+            highlightBorderWidth: 2
+            // don't change color on mouse hover
+            highlightFillColor: function(geo) {
+                return geo['fillColor'] || '#F5F5F5';
+            },
+            // only change border
+            highlightBorderColor: '#444',
+            // show desired information in tooltip
+            popupTemplate: function(geo, data) {
+                // don't show tooltip if country don't present in dataset
+                if (!data) {
+                 return ['<div class="hoverinfo">',
+                    '<strong>', geo.properties.name, '</strong>',
+                    '</div>'].join('');
+                }
+                // tooltip content
+                return ['<div class="hoverinfo">',
+                    '<strong>', geo.properties.name, '</strong>',
+                    '<br>Count: <strong>', data.numberOfThings, '</strong>',
+                    '</div>'].join('');
+            }
+        }
+    });
+    window.wmap = wmap;
   }
 }
 
@@ -437,7 +486,10 @@ function buildTable(){
 }
 
 
-
+window.addEventListener('resize', function() {
+    let map = window.wmap;
+    map.resize();
+});
 
 // on document load IIFE
 (async function () {

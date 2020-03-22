@@ -24,6 +24,7 @@
     "d3": "^5.15.0",
     "datamaps": "^0.5.9",
     "feather-icons": "^4.26.0",
+    "i18n-iso-countries": "^5.1.0",
     "parcel-bundler": "^1.12.4",
     "tabulator-tables": "^4.5.3",
     "topojson": "^3.0.2",
