@@ -26,7 +26,6 @@ export async function makeDictionary(){
 
 export async function getCountrySeries(){
 	let dict = await makeDictionary();
-	console.log(dict);
 	let tcases = JSON.parse(ls.getItem("tcases"));
 	// console.log("tcases in getCountrySeries", tcases);
 	let countries = Object.keys(tcases[0]).filter(e => (e!=='date' && e!=='World'))
@@ -39,4 +38,21 @@ export async function getCountrySeries(){
 		series.push([id,value])
 	}
 	return series;
+}
+
+
+export function getWorldData(){
+	let tcases = JSON.parse(ls.getItem("tcases"));
+	let tdeaths = JSON.parse(ls.getItem("tdeaths"));
+	let ncases = JSON.parse(ls.getItem("ncases"));
+	let ndeaths = JSON.parse(ls.getItem("ndeaths"));
+	let lastIndex = tcases.length - 1;
+
+	let tcn,tdn,ndn,ncn = 0;
+	tcn = tcases[lastIndex]["World"];
+	ncn = ncases[lastIndex]["World"];
+	tdn = tdeaths[lastIndex]["World"];
+	ndn = ndeaths[lastIndex]["World"];
+
+	return {tcn,tdn,ncn,ndn};
 }

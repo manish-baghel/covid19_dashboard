@@ -233,14 +233,12 @@ async function generateWorldMap(){
             maxValue = Math.max.apply(null, onlyValues);
 
 
-    var paletteScale = d3.scaleLinear()
+    var paletteScale = d3.scalePow()
+            .exponent(0.5)
             .domain([minValue,maxValue])
-            .range(["#FDF0D9","#AA261E"); // red color
-    window.pscale = paletteScale;
+            .range(['#ffefeb','#560001']);
 
-    // fill dataset in appropriate format
     series.forEach(function(item){ //
-        // item example value ["USA", 70]
         var iso = item[0],
                 value = item[1];
         dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
@@ -250,17 +248,17 @@ async function generateWorldMap(){
   if(elem.children.length==0){
     let wmap = new Datamap({
         element: elem,
-        projection: 'mercator', // big world map
+        projection: 'mercator',
         fills: { defaultFill: '#F5F5F5' },
         responsive:true,
         data: dataset,
         geographyConfig: {
-            borderColor: '#444',
+            borderColor: '#222',
             highlightBorderWidth: 2
             highlightFillColor: function(geo) {
                 return geo['fillColor'] || '#F5F5F5';
             },
-            highlightBorderColor: '#444',
+            highlightBorderColor: '#222',
             popupTemplate: function(geo, data) {
                 if (!data) {
                  return ['<div class="hoverinfo">',
@@ -275,6 +273,40 @@ async function generateWorldMap(){
         }
     });
     window.wmap = wmap;
+    let {tcn,tdn,ncn,ndn} = data.getWorldData();
+    let p = document.getElementById('world-info');
+    let elem1 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Confirmed Cases</h2>
+              <h2 class="card-title text-left">`+tcn+`</h1>
+            </div>
+          </div>`;
+    let elem2 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Deaths</h2>
+              <h2 class="card-title text-left">`+tdn+`</h1>
+            </div>
+          </div>`;
+    let elem3 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">New Confirmed Cases</h2>
+              <h2 class="card-title text-left">`+ncn+`</h1>
+            </div>
+          </div>`;
+    let elem4 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">New Deaths</h2>
+              <h2 class="card-title text-left">`+ndn+`</h1>
+            </div>
+          </div>`;
+    let s = [elem1,elem2,elem3,elem4].join("");
+    let cont = document.createElement('div');
+    cont.classList.add('numbers-container','mt-md-4','mt-sm-0');
+    let div = document.createElement('div');
+    div.classList.add('card-deck','mb-3');
+    div.innerHTML = s;
+    cont.appendChild(div);
+    p.appendChild(cont);
   }
 }
 
@@ -393,7 +425,7 @@ let indbtn = document.getElementById('indbtn');
 let usabtn = document.getElementById('usabtn');
 
 worldbtn.addEventListener("click",(ev) => {
-  let elem = document.getElementById("world-map-container");
+  let elem = document.getElementById("world-info");
   routeHelper(elem);
   listHelper(ev);
   if(elem.classList.contains("d-none")){

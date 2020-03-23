@@ -47371,7 +47371,6 @@ function getCountrySeries() {
 
         case 1:
           dict = _a.sent();
-          console.log(dict);
           tcases = JSON.parse(ls.getItem("tcases"));
           countries = Object.keys(tcases[0]).filter(function (e) {
             return e !== 'date' && e !== 'World';
@@ -47396,6 +47395,30 @@ function getCountrySeries() {
 }
 
 exports.getCountrySeries = getCountrySeries;
+
+function getWorldData() {
+  var tcases = JSON.parse(ls.getItem("tcases"));
+  var tdeaths = JSON.parse(ls.getItem("tdeaths"));
+  var ncases = JSON.parse(ls.getItem("ncases"));
+  var ndeaths = JSON.parse(ls.getItem("ndeaths"));
+  var lastIndex = tcases.length - 1;
+  var tcn,
+      tdn,
+      ndn,
+      ncn = 0;
+  tcn = tcases[lastIndex]["World"];
+  ncn = ncases[lastIndex]["World"];
+  tdn = tdeaths[lastIndex]["World"];
+  ndn = ndeaths[lastIndex]["World"];
+  return {
+    tcn: tcn,
+    tdn: tdn,
+    ncn: ncn,
+    ndn: ndn
+  };
+}
+
+exports.getWorldData = getWorldData;
 },{}],"node_modules/csvtojson/browser/browser.js":[function(require,module,exports) {
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function (obj) { return typeof obj; }; } else { _typeof = function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -106514,26 +106537,24 @@ function plotGraph() {
 
 function generateWorldMap() {
   return __awaiter(this, void 0, void 0, function () {
-    var series, dataset, onlyValues, minValue, maxValue, paletteScale, elem, wmap;
-    return __generator(this, function (_a) {
-      switch (_a.label) {
+    var series, dataset, onlyValues, minValue, maxValue, paletteScale, elem, wmap, _a, tcn, tdn, ncn, ndn, p, elem1, elem2, elem3, elem4, s, cont, div;
+
+    return __generator(this, function (_b) {
+      switch (_b.label) {
         case 0:
           return [4
           /*yield*/
           , data.getCountrySeries()];
 
         case 1:
-          series = _a.sent();
+          series = _b.sent();
           dataset = {};
           onlyValues = series.map(function (obj) {
             return obj[1];
           });
           minValue = Math.min.apply(null, onlyValues), maxValue = Math.max.apply(null, onlyValues);
-          paletteScale = d3.scaleLinear().domain([minValue, maxValue]).range(["#FDF0D9", "#AA261E"]);
-          window.pscale = paletteScale; // fill dataset in appropriate format
-
+          paletteScale = d3.scalePow().exponent(0.5).domain([minValue, maxValue]).range(['#ffefeb', '#560001']);
           series.forEach(function (item) {
-            // item example value ["USA", 70]
             var iso = item[0],
                 value = item[1];
             dataset[iso] = {
@@ -106554,12 +106575,12 @@ function generateWorldMap() {
               responsive: true,
               data: dataset,
               geographyConfig: {
-                borderColor: '#444',
+                borderColor: '#222',
                 highlightBorderWidth: 2,
                 highlightFillColor: function highlightFillColor(geo) {
                   return geo['fillColor'] || '#F5F5F5';
                 },
-                highlightBorderColor: '#444',
+                highlightBorderColor: '#222',
                 popupTemplate: function popupTemplate(geo, data) {
                   if (!data) {
                     return ['<div class="hoverinfo">', '<strong>', geo.properties.name, '</strong>', '</div>'].join('');
@@ -106570,6 +106591,20 @@ function generateWorldMap() {
               }
             });
             window.wmap = wmap;
+            _a = data.getWorldData(), tcn = _a.tcn, tdn = _a.tdn, ncn = _a.ncn, ndn = _a.ndn;
+            p = document.getElementById('world-info');
+            elem1 = "<div class=\"card mb-4 shadow-sm\">\n            <div class=\"card-body\">\n              <h6 class=\"text-left\">Total Confirmed Cases</h2>\n              <h2 class=\"card-title text-left\">" + tcn + "</h1>\n            </div>\n          </div>";
+            elem2 = "<div class=\"card mb-4 shadow-sm\">\n            <div class=\"card-body\">\n              <h6 class=\"text-left\">Total Deaths</h2>\n              <h2 class=\"card-title text-left\">" + tdn + "</h1>\n            </div>\n          </div>";
+            elem3 = "<div class=\"card mb-4 shadow-sm\">\n            <div class=\"card-body\">\n              <h6 class=\"text-left\">New Confirmed Cases</h2>\n              <h2 class=\"card-title text-left\">" + ncn + "</h1>\n            </div>\n          </div>";
+            elem4 = "<div class=\"card mb-4 shadow-sm\">\n            <div class=\"card-body\">\n              <h6 class=\"text-left\">New Deaths</h2>\n              <h2 class=\"card-title text-left\">" + ndn + "</h1>\n            </div>\n          </div>";
+            s = [elem1, elem2, elem3, elem4].join("");
+            cont = document.createElement('div');
+            cont.classList.add('numbers-container', 'mt-md-4', 'mt-sm-0');
+            div = document.createElement('div');
+            div.classList.add('card-deck', 'mb-3');
+            div.innerHTML = s;
+            cont.appendChild(div);
+            p.appendChild(cont);
           }
 
           return [2
@@ -106726,7 +106761,7 @@ var abtbtn = document.getElementById('abtbtn');
 var indbtn = document.getElementById('indbtn');
 var usabtn = document.getElementById('usabtn');
 worldbtn.addEventListener("click", function (ev) {
-  var elem = document.getElementById("world-map-container");
+  var elem = document.getElementById("world-info");
   routeHelper(elem);
   listHelper(ev);
 
@@ -106872,7 +106907,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55604" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65122" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
