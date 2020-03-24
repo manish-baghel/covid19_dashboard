@@ -195,6 +195,7 @@ function generateWorldMap(){
         fills: { defaultFill: '#F5F5F5' },
         responsive:true,
         data: dataset,
+        aspectRatio: 0.5925,
         geographyConfig: {
             borderColor: '#222',
             highlightBorderWidth: 2
@@ -302,8 +303,10 @@ function generateIndia(){
       },
       setProjection: function (element) {
           var projection = d3.geoMercator()
-              .center([78.9629, 23.5937]) // always in [East Latitude, North Longitude]
-              .scale(1000);
+              .center([81.9629, 21.5937])
+              //.scale(1000)
+              .scale(element.offsetWidth)
+              .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
           var path = d3.geoPath().projection(projection);
           return { path: path, projection: projection };
       }
@@ -411,13 +414,15 @@ async function chartHelper(){
     let diff = 60*60*1000;
     if(ct - parseInt(ut) > diff){
       ls.clear();
+      await data.getData();
+      data.getIndiaData();
     }
+  }else{
+    await data.getData();
+    data.getIndiaData();
   }
-  await data.getData();
   plotGraph();
   buildTable();
-  data.getIndiaData();
-  data.getIndiaSeries();
 }
 
 let dashbtn = document.getElementById('dashbtn');
@@ -452,6 +457,7 @@ indbtn.addEventListener("click",(ev) => {
   if(elem.classList.contains("d-none")){
     elem.classList.remove("d-none");
     generateIndia();
+    window.indmap.resize();
   }
 });
 

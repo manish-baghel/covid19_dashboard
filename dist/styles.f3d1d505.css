@@ -14349,6 +14349,15 @@ body {
   vertical-align: text-bottom;
 }
 
+main {
+  box-sizing: content-box !important;
+}
+
+@media (min-width: 990px) {
+  main {
+    box-sizing: border-box !important;
+  }
+}
 /*
  * Sidebar
  */
@@ -14473,10 +14482,6 @@ a.kofi-button {
 
 #logScale {
   box-shadow: none !important;
-}
-
-#india-map-container {
-  padding-bottom: 47% !important;
 }
 
 /*# sourceMappingURL=/styles.f3d1d505.css.map */
