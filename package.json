@@ -13,21 +13,25 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.12.1",
+    "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
     "csv-parser": "^2.3.2",
     "csvtojson": "^2.0.10",
     "d3": "^5.15.0",
+    "d3-svg-legend": "^2.25.6",
     "datamaps": "^0.5.9",
     "feather-icons": "^4.26.0",
+    "html-table-to-json": "^1.0.0",
     "i18n-iso-countries": "^5.1.0",
+    "jquery": "^3.4.1",
+    "jssoup": "0.0.11",
     "parcel-bundler": "^1.12.4",
+    "popper.js": "^1.16.1",
+    "sass": "^1.26.3",
+    "tabletojson": "^2.0.3",
     "tabulator-tables": "^4.5.3",
     "topojson": "^3.0.2",
-    "topojson-client": "^3.1.0",
-    "@fortawesome/fontawesome-free": "^5.12.1",
-    "bootstrap": "^4.4.1",
-    "jquery": "^3.4.1",
-    "popper.js": "^1.16.1",
-    "sass": "^1.26.3"
+    "topojson-client": "^3.1.0"
   }
 }

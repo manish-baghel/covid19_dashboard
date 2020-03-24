@@ -58,44 +58,53 @@
               United States
             </a>
           </li>
-          <li class="nav-item" id="abtbtn">
+          <!-- <li class="nav-item" id="testbtn">
             <a class="nav-link" href="#">
               <span data-feather="shopping-cart"></span>
-              About
+              Testing Data
             </a>
-          </li>
+          </li> -->
         </ul>
       </div>
     </nav>
 
     <main role="main" id="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-    	<div id="chart-container">
-	      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-	        <h1 class="h2">Dashboard</h1>
-	        <div class="btn-toolbar mb-2 mb-md-0">
-	          <div class="btn-group mr-2">
-	            <button type="button" class="btn btn-sm btn-outline-secondary" id="linearScale">Linear</button>
-	            <button type="button" class="btn btn-sm btn-outline-secondary" id="logScale">Logarithmic</button>
-	          </div>
-	          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-	            <span data-feather="calendar"></span>
-	            This week
-	          </button>
-	        </div>
-	      </div>
+      <div id="chart-container">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Dashboard</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="linearScale">Linear</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" id="logScale">Logarithmic</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+              <span data-feather="calendar"></span>
+              This week
+            </button>
+          </div>
+        </div>
 
-	      <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-	      <h2>Current Data</h2>
-	      <div id="main-data-table"></div>
-	    </div>
+        <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+        <h2>Current Data</h2>
+        <div id="main-data-table"></div>
+        <div id="test-chart-container">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Worldwide Testing Data</h1>
+          </div>
+          <canvas class="my-4 w-100" id="testingChart" width="900" height="380"></canvas>
+        </div>
+      </div>
 
-		<div id="world-info" class="d-none">
-      <div id="world-map-container" class="mt-md-2 mt-sm-0 mb-md-1 mb-sm-1" style=""></div>  
-    </div>
+      <div id="world-info" class="d-none">
+        <div id="world-map-container" class="mt-md-2 mt-sm-0 mb-md-1 mb-sm-1 border-bottom" style=""></div>  
+      </div>
+      
+      <div id="india-info" class="d-none">
+        <div id="india-map-container" class="border-bottom" style="padding-bottom: 47%; padding-top: 1%">
+        </div>
+      </div>
 
-		<div id="india-map-container" class="d-none justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="position: relative; width: 900px; height: 1000px;"></div>
-
-		<div id="usa-map-container" class="d-none justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="position: relative; width: 800px; height: 600px;"></div>
+      <div id="usa-map-container" class="d-none justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="position: relative; width: 800px; height: 600px;"></div>
 
       
       
