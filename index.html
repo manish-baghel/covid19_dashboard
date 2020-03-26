@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1"> -->
+  <meta name="COVID-19 | nCov2019 Dashboard" content="Tracking the coronavirus cases worldwide during the outbreak.">
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161429606-1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,7 +14,11 @@
   </script>
 
 	<meta charset="UTF-8">
-	<title>COVID-19 || nCov2019 Dashboard</title>
+	<title>COVID-19 | nCov2019 Dashboard</title>
+  <meta name="title" content="COVID-19 | nCov2019 Dashboard">
+  <meta name="description" content="Tracking the coronavirus cases worldwide during the outbreak.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://manish-baghel.github.io/covid19_dashboard">
 	<link rel='icon' href='favicon.png' type='image/x-icon'/ >
 	<!-- Styles -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/tabulator/4.4.3/css/bootstrap/tabulator_bootstrap4.min.css" rel="stylesheet">
@@ -21,7 +27,11 @@
 <body>
 
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-  <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">COVID-19</a>
+  <!-- <button type="button" id="sidebarCollapse" class="btn btn-info">
+      <i class="fas fa-align-left"></i>
+       <span>Toggle Sidebar</span>
+  </button>COVID-19</a> -->
+  <a class="navbar-brand col-sm-3 col-md-2 mr-0">COVID-19</a>
   <ul class="navbar-nav px-3">
     <li class="nav-item text-nowrap">
       <a href='https://ko-fi.com/L3L31IWXG' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi2.png?v=2' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
@@ -31,7 +41,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+    <nav class="col-md-2 d-none d-md-block bg-light sidebar active" id="sidebar">
       <div class="sidebar-sticky">
         <ul class="nav flex-column" id="link-list">
           <li class="nav-item" id="dashbtn">
@@ -105,7 +115,10 @@
         </div>
       </div>
 
-      <div id="usa-map-container" class="d-none justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom" style="position: relative; width: 800px; height: 600px;"></div>
+      <div id="us-info" class="d-none">
+        <h1 class="h2 border-bottom pt-3">United States of America</h1>
+        <div id="usa-map-container" class="border-bottom" style="padding-top: -2%;"></div>
+      </div>
 
       
       

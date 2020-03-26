@@ -5,6 +5,7 @@ import * as data from './data.ts';
 import Datamap from 'datamaps';
 import * as d3 from 'd3';
 import * as scrapper from "./scraping.ts";
+import { legendColor } from 'd3-svg-legend';
 
 const ls = window.localStorage;
 
@@ -312,6 +313,29 @@ function generateIndia(){
       }
     });
     window.indmap = indmap;
+    // let s = document.createElement('svg');
+    // s.classList.add('legend');
+    // elem.appendChild(s);
+    // var pow = d3.scalePow()
+    //       .exponent(0.5)
+    //       .domain([minValue,maxValue])
+    //       .range(['#ffefeb','#560001']);
+
+    // var svg = d3.select("#india-map-container svg.legend");
+
+    // svg.append("g")
+    //   .attr("id", "indLegend")
+    //   .attr("transform", "translate(20,20)");
+
+    // var legend = legendColor()
+    //   .title("A title")
+    //   .cells(10)
+    //   .orient('vertical')
+    //   .scale(pow);
+
+    // svg.select("#indLegend")
+    //     .call(legend);
+
     let {tcn,tdn,ncn,ndn} = data.getIndiaHighlights();
     let p = document.getElementById('india-info');
     let elem1 = `<div class="card mb-4 shadow-sm">
@@ -350,12 +374,54 @@ function generateIndia(){
 }
 
 function generateUsa(){
+  let series = data.getUSSeries();
+  var dataset = {};
+  var onlyValues = series.map(function(obj){ return obj[1]; });
+  var minValue = Math.min.apply(null, onlyValues),
+      maxValue = Math.max.apply(null, onlyValues);
+
+
+  var paletteScale = d3.scalePow()
+          .exponent(0.5)
+          .domain([minValue,maxValue])
+          .range(['#ffefeb','#560001']);
+
+  series.forEach(function(item){ //
+      var iso = item[0],
+              value = item[1];
+      dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
+  });
   let elem = document.getElementById('usa-map-container');
   if(elem.children.length==0){
     var usmap = new Datamap({
       element:elem,
-      scope:'usa'
+      scope:'usa',
+      projection: 'mercator',
+      fills: { defaultFill: '#F5F5F5' },
+      responsive:true,
+      data: dataset,
+      aspectRatio: 0.5925,
+      geographyConfig: {
+          borderColor: '#222',
+          highlightBorderWidth: 2
+          highlightFillColor: function(geo) {
+              return geo['fillColor'] || '#F5F5F5';
+          },
+          highlightBorderColor: '#222',
+          popupTemplate: function(geo, data) {
+              if (!data) {
+               return ['<div class="hoverinfo">',
+                  '<strong>', geo.properties.name, '</strong>',
+                  '</div>'].join('');
+              }
+              return ['<div class="hoverinfo">',
+                  '<strong>', geo.properties.name, '</strong>',
+                  '<br>Count: <strong>', data.numberOfThings, '</strong>',
+                  '</div>'].join('');
+          }
+      }
     });
+    window.usmap = usmap;
   }
 }
 
@@ -412,14 +478,16 @@ async function chartHelper(){
     let ut = ls.getItem('updated_at');
     let ct = Date.now();
     let diff = 60*60*1000;
-    if(ct - parseInt(ut) > diff){
+    if(ct - parseInt(ut) >= diff){
       ls.clear();
       await data.getData();
       data.getIndiaData();
+      data.getUSData();
     }
   }else{
     await data.getData();
     data.getIndiaData();
+    data.getUSData();
   }
   plotGraph();
   buildTable();
@@ -462,7 +530,7 @@ indbtn.addEventListener("click",(ev) => {
 });
 
 usabtn.addEventListener("click",(ev) => {
-  let elem = document.getElementById("usa-map-container");
+  let elem = document.getElementById("us-info");
   routeHelper(elem);
   listHelper(ev);
   if(elem.classList.contains("d-none")){
@@ -520,11 +588,14 @@ function buildTable(){
 }
 
 
+
 window.addEventListener('resize', function() {
     let map1 = window.wmap;
     let map2 = window.indmap; 
+    let map3 = window.usmap; 
     map1.resize();
     map2.resize();
+    map3.resize();
 });
 
 // on document load IIFE
