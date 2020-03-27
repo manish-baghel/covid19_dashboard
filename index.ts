@@ -167,6 +167,10 @@ async function plotTestingGraph(){
         }
     }
   });
+
+  window.lb = labels;
+  window.dt = data;
+  window.testChart = myBarChart;  
 }
 
 // Data Maps
@@ -313,30 +317,8 @@ function generateIndia(){
       }
     });
     window.indmap = indmap;
-    // let s = document.createElement('svg');
-    // s.classList.add('legend');
-    // elem.appendChild(s);
-    // var pow = d3.scalePow()
-    //       .exponent(0.5)
-    //       .domain([minValue,maxValue])
-    //       .range(['#ffefeb','#560001']);
 
-    // var svg = d3.select("#india-map-container svg.legend");
-
-    // svg.append("g")
-    //   .attr("id", "indLegend")
-    //   .attr("transform", "translate(20,20)");
-
-    // var legend = legendColor()
-    //   .title("A title")
-    //   .cells(10)
-    //   .orient('vertical')
-    //   .scale(pow);
-
-    // svg.select("#indLegend")
-    //     .call(legend);
-
-    let {tcn,tdn,ncn,ndn} = data.getIndiaHighlights();
+    let {tcn,tdn,ncn,ndn,ttest,utest} = data.getIndiaHighlights();
     let p = document.getElementById('india-info');
     let elem1 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
@@ -362,6 +344,18 @@ function generateIndia(){
               <h2 class="card-title text-left">`+ndn+`</h1>
             </div>
           </div>`;
+    let elem5 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Individuals Tested</h2>
+              <h2 class="card-title text-left">`+ttest+`</h1>
+            </div>
+          </div>`;
+    let elem6 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Testing Data Updated at:</h2>
+              <h2 class="card-title text-left">`+utest+`</h1>
+            </div>
+          </div>`;
     let s = [elem1,elem2,elem3,elem4].join("");
     let cont = document.createElement('div');
     cont.classList.add('numbers-container','mt-md-4','mt-sm-0');
@@ -369,7 +363,13 @@ function generateIndia(){
     div.classList.add('card-deck','mb-3');
     div.innerHTML = s;
     cont.appendChild(div);
+    s = [elem5,elem6].join("")
+    div = document.createElement('div');
+    div.classList.add('card-deck','mb-3');
+    div.innerHTML = s;
+    cont.appendChild(div);
     p.appendChild(cont);
+    buildIndiaTable();
   }
 }
 
@@ -422,6 +422,41 @@ function generateUsa(){
       }
     });
     window.usmap = usmap;
+
+    let {tcn,tdn,ncn,ndn,ttest,utest} = data.getUSHighlights();
+    let p = document.getElementById('us-info');
+    let elem1 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Confirmed Cases</h2>
+              <h2 class="card-title text-left">`+tcn+`</h1>
+            </div>
+          </div>`;
+    let elem2 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Deaths</h2>
+              <h2 class="card-title text-left">`+tdn+`</h1>
+            </div>
+          </div>`;
+    let elem3 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Currently Hospitalized</h2>
+              <h2 class="card-title text-left">`+ncn+`</h1>
+            </div>
+          </div>`;
+    let elem4 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Tested</h2>
+              <h2 class="card-title text-left">`+ndn+`</h1>
+            </div>
+          </div>`;
+    let s = [elem1,elem2,elem3,elem4].join("");
+    let cont = document.createElement('div');
+    cont.classList.add('numbers-container','mt-md-4','mt-sm-0');
+    let div = document.createElement('div');
+    div.classList.add('card-deck','mb-3');
+    div.innerHTML = s;
+    cont.appendChild(div);
+    p.appendChild(cont);
   }
 }
 
@@ -490,7 +525,7 @@ async function chartHelper(){
     data.getUSData();
   }
   plotGraph();
-  buildTable();
+  buildWorldTable();
 }
 
 let dashbtn = document.getElementById('dashbtn');
@@ -542,7 +577,7 @@ usabtn.addEventListener("click",(ev) => {
 
 // Table related functions
 
-function buildTable(){
+function buildWorldTable(){
   let tcases = JSON.parse(ls.getItem('tcases')),
     tdeaths = JSON.parse(ls.getItem('tdeaths')),
     ncases = JSON.parse(ls.getItem('ncases')),
@@ -568,7 +603,6 @@ function buildTable(){
     responsiveLayout:"hide",  //hide columns that dont fit on the table
     tooltips:true,            //show tool tips on cells
     addRowPos:"top",          //when adding a new row, add it to the top of the table
-    history:true,             //allow undo and redo actions on the table
     pagination:"local",       //paginate the data
     paginationSize:10,         //allow 7 rows per page of data
     movableColumns:false,      //allow column order to be changed
@@ -578,8 +612,56 @@ function buildTable(){
       {column:"tcases", dir:"dsc"},
     ],
     columns:[                 //define the table columns
-      {title:"Name", field:"name",headerFilter:"input",headerFilterPlaceholder:"country name ..."},
+      {title:"Name", field:"name",headerFilter:"input",headerFilterPlaceholder:"Type few initial letters..."},
       {title:"Total Cases", field:"tcases"},
+      {title:"Total Deaths", field:"tdeaths"},
+      {title:"New Cases", field:"ncases"},
+      {title:"New Deaths", field:"ndeaths"}
+    ],
+  });
+}
+
+
+function buildIndiaTable(){
+  let stateWise = JSON.parse(ls.getItem("indStateWise"));
+  let indStateWise = stateWise.slice(1,stateWise.length);
+  let dataArray = []
+  for(let o of indStateWise){
+    let obj = {
+      name:o.state,
+      tcases:o.confirmed
+      tdeaths:o.deaths
+      ncases:o.delta.confirmed
+      ndeaths:o.delta.deaths,
+      rec:o.recovered,
+      active:o.active
+    }
+    dataArray.push(obj);
+  }
+
+  let container = document.getElementById("india-info");
+  let div = document.createElement('div');
+  div.id = "ind-data-table";
+  container.appendChild(div);
+  var table = new Tabulator("#ind-data-table", {
+    data:dataArray,           //load row data from array
+    layout:"fitColumns",      //fit columns to width of table
+    responsiveLayout:"hide",  //hide columns that dont fit on the table
+    tooltips:true,            //show tool tips on cells
+    addRowPos:"top",          //when adding a new row, add it to the top of the table
+    pagination:"local",       //paginate the data
+    paginationSize:10,         //allow 7 rows per page of data
+    movableColumns:false,      //allow column order to be changed
+    resizableRows:false,
+    resizableColumns:false,       //allow row order to be changed
+    initialSort:[             //set the initial sort order of the data
+      {column:"tcases", dir:"dsc"},
+    ],
+    columns:[                 //define the table columns
+      {title:"Name", field:"name",headerFilter:"input",headerFilterPlaceholder:"Type few initial letters..."},
+      {title:"Total Cases", field:"tcases"},
+      {title:"Total Active", field:"active"},
+      {title:"Total Recovered", field:"rec"},
       {title:"Total Deaths", field:"tdeaths"},
       {title:"New Cases", field:"ncases"},
       {title:"New Deaths", field:"ndeaths"}
