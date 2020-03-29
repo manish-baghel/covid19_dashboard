@@ -461,6 +461,126 @@ function generateUsa(){
 }
 
 
+function generateUK(){
+  let series = data.getUKSeries();
+  var dataset = {};
+  var onlyValues = series.map(function(obj){ return obj[1]; });
+  var minValue = Math.min.apply(null, onlyValues),
+      maxValue = Math.max.apply(null, onlyValues);
+
+
+  var paletteScale = d3.scalePow()
+          .exponent(0.5)
+          .domain([minValue,maxValue])
+          .range(['#ffefeb','#560001']);
+
+  series.forEach(function(item){ //
+      var iso = item[0],
+              value = item[1];
+      if(iso=="UK") dataset[iso] = { numberOfThings: value,borderWidth:2, fillColor: paletteScale(value) };
+      else dataset[iso] = { numberOfThings: value, fillColor: paletteScale(value) };
+  });
+  let elem = document.getElementById('uk-map-container');
+  if(elem.children.length==0){
+    var ukmap = new Datamap({
+      element:elem,
+      scope:'india',
+      projection: 'mercator',
+      fills: { defaultFill: '#F5F5F5' },
+      responsive:true,
+      data: dataset,
+      aspectRatio: 0.5925,
+      geographyConfig: {
+        dataJson: indiaTopo
+        borderColor: '#222',
+        highlightBorderWidth: 1.5
+        highlightFillColor: function(geo) {
+            return geo['fillColor'] || '#F5F5F5';
+        },
+        highlightBorderColor: '#222',
+        popupTemplate: function(geo, data) {
+            if (!data) {
+             return ['<div class="hoverinfo">',
+                '<strong>', geo.properties.name, '</strong>',
+                '</div>'].join('');
+            }
+            return ['<div class="hoverinfo">',
+                '<strong>', geo.properties.name, '</strong>',
+                '<br>Count: <strong>', data.numberOfThings, '</strong>',
+                '</div>'].join('');
+        }
+      },
+      setProjection: function (element) {
+          var projection = d3.geoMercator()
+              .center([78.9629, 28.5937])
+              .scale(4200)
+              .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+          var path = d3.geoPath().projection(projection);
+          return { path: path, projection: projection };
+      }
+    });
+    ukmap.labels();
+    // let oldChoro = ukmap.options.data.UK;
+    // oldChoro["borderWidth"] = 1.5;
+    // ukmap.updateChoropleth({UK:oldChoro});
+    window.ukmap = ukmap;
+
+    let {tcn,tdn,ncn,ndn,rec,act} = data.getUKHighlights();
+    let p = document.getElementById('uk-info');
+    let elem1 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Confirmed</h2>
+              <h2 class="card-title text-left">`+tcn+`</h1>
+            </div>
+          </div>`;
+    let elem2 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Active</h2>
+              <h2 class="card-title text-left">`+act+`</h1>
+            </div>
+          </div>`; 
+    let elem3 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Recovered</h2>
+              <h2 class="card-title text-left">`+rec+`</h1>
+            </div>
+          </div>`;
+    let elem4 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">Total Deaths</h2>
+              <h2 class="card-title text-left">`+tdn+`</h1>
+            </div>
+          </div>`; 
+    let elem5 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">New Confirmed cases</h2>
+              <h2 class="card-title text-left">`+ncn+`</h1>
+            </div>
+          </div>`;
+    let elem6 = `<div class="card mb-4 shadow-sm">
+            <div class="card-body">
+              <h6 class="text-left">New Deaths ( last 24 hrs)</h2>
+              <h2 class="card-title text-left">`+ndn+`</h1>
+            </div>
+          </div>`;
+    let s = [elem1,elem2,elem3,elem4].join("");
+    let cont = document.createElement('div');
+    cont.classList.add('numbers-container','mt-md-4','mt-sm-0');
+    let div = document.createElement('div');
+    div.classList.add('card-deck','mb-3');
+    div.innerHTML = s;
+    cont.appendChild(div);
+    s = [elem5,elem6].join("")
+    div = document.createElement('div');
+    div.classList.add('card-deck','mb-3');
+    div.innerHTML = s;
+    cont.appendChild(div);
+    p.appendChild(cont);
+    buildUKTable();
+  }
+}
+
+
 // Event Listeners
 
 let linbtn = document.getElementById("linearScale");
@@ -517,12 +637,12 @@ async function chartHelper(){
       ls.clear();
       await data.getData();
       data.getIndiaData();
-      data.getUSData();
+      data.getUKData();
     }
   }else{
     await data.getData();
     data.getIndiaData();
-    data.getUSData();
+    data.getUKData();
   }
   plotGraph();
   buildWorldTable();
@@ -531,7 +651,7 @@ async function chartHelper(){
 let dashbtn = document.getElementById('dashbtn');
 let worldbtn = document.getElementById('worldbtn');
 let indbtn = document.getElementById('indbtn');
-let usabtn = document.getElementById('usabtn');
+let ukbtn = document.getElementById('ukbtn');
 
 worldbtn.addEventListener("click",(ev) => {
   let elem = document.getElementById("world-info");
@@ -564,13 +684,13 @@ indbtn.addEventListener("click",(ev) => {
   }
 });
 
-usabtn.addEventListener("click",(ev) => {
-  let elem = document.getElementById("us-info");
+ukbtn.addEventListener("click",(ev) => {
+  let elem = document.getElementById("uk-info");
   routeHelper(elem);
   listHelper(ev);
   if(elem.classList.contains("d-none")){
     elem.classList.remove("d-none");
-    generateUsa();
+    generateUK();
   }
 });
 
@@ -670,11 +790,69 @@ function buildIndiaTable(){
 }
 
 
+function buildUKTable(){
+  let ukData = JSON.parse(ls.getItem("ukDistrictWise"));
+  let ukDistricts = ["Chamoli","Dehradun","Haridwar","Pauri","Rudraprayag","Tehri Garhwal","Uttarkashi","Unknown"];
+  let ukDistrictWise = ukData.districtData;
+  let dataArray = [];
+  for(let k of ukDistricts){
+    let cdist = {}
+    if(ukDistrictWise.hasOwnProperty(k)) cdist = ukDistrictWise[k];
+    if(!cdist.hasOwnProperty("delta")){
+      cdist["delta"] = {confirmed:0,deaths:0,recovered:0}
+    }
+    if(!cdist.hasOwnProperty("confirmed")) cdist["confirmed"]=0;
+    if(!cdist.hasOwnProperty("deaths")) cdist["deaths"]=0;
+    if(!cdist.hasOwnProperty("recovered")) cdist["recovered"]=0;
+    if(!cdist.hasOwnProperty("active")) cdist["active"]=cdist.confirmed - cdist.deaths - cdist.recovered;
+    let obj = {
+      name:k,
+      tcases:cdist.confirmed,
+      tdeaths:cdist.deaths,
+      ncases:cdist.delta.confirmed,
+      ndeaths:cdist.delta.deaths,
+      rec:cdist.recovered,
+      active:cdist.active
+    }
+    dataArray.push(obj);
+  }
+
+  let container = document.getElementById("uk-info");
+  let div = document.createElement('div');
+  div.id = "uk-data-table";
+  container.appendChild(div);
+  var table = new Tabulator("#uk-data-table", {
+    data:dataArray,           //load row data from array
+    layout:"fitColumns",      //fit columns to width of table
+    responsiveLayout:"hide",  //hide columns that dont fit on the table
+    tooltips:true,            //show tool tips on cells
+    addRowPos:"top",          //when adding a new row, add it to the top of the table
+    pagination:"local",       //paginate the data
+    paginationSize:10,         //allow 7 rows per page of data
+    movableColumns:false,      //allow column order to be changed
+    resizableRows:false,
+    resizableColumns:false,       //allow row order to be changed
+    initialSort:[             //set the initial sort order of the data
+      {column:"tcases", dir:"dsc"},
+    ],
+    columns:[                 //define the table columns
+      {title:"District", field:"name"},
+      {title:"Total Cases", field:"tcases"},
+      {title:"Total Active", field:"active"},
+      {title:"Total Recovered", field:"rec"},
+      {title:"Total Deaths", field:"tdeaths"},
+      {title:"New Cases", field:"ncases"},
+      {title:"New Deaths", field:"ndeaths"}
+    ],
+  });
+}
+
+
 
 window.addEventListener('resize', function() {
     let map1 = window.wmap;
     let map2 = window.indmap; 
-    let map3 = window.usmap; 
+    let map3 = window.ukmap; 
     map1.resize();
     map2.resize();
     map3.resize();
