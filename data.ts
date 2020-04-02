@@ -116,8 +116,8 @@ export async function getData(){
       fetch(new_deaths_uri)
     ])
       .then(async response => {
-        let blobs = [await response[0].text(),await response[1].text(),await response[2].text(),await response[3].text()]
-        return blobs
+        let texts = [await response[0].text(),await response[1].text(),await response[2].text(),await response[3].text()]
+        return texts
       })
       .then(async texts => {
         let tcases = await csv().fromString(texts[0])
