@@ -94,8 +94,11 @@ export function getIndiaHighlights(){
 	let tdn = stateWise[0]["deaths"];
 	let ncn = newCases[0]["confirmeddelta"];
 	let ndn = newCases[0]["deceaseddelta"];
-	let ttest = tested[tested.length-1]["totalindividualstested"];
+	let ttest = tested[tested.length-1]["totalsamplestested"];
 	let utest = tested[tested.length-1]["updatetimestamp"];
+	let a = utest.split("/");
+	[a[0],a[1]] = [a[1],a[0]];
+	utest = new Date(Date.parse(a.join("/"))).toDateString();
 	return {tcn,tdn,ncn,ndn,ttest,utest};
 }
 
