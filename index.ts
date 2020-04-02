@@ -346,13 +346,13 @@ function generateIndia(){
           </div>`;
     let elem5 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h6 class="text-left">Total Individuals Tested</h2>
+              <h6 class="text-left">Total Individuals/Samples Tested</h2>
               <h2 class="card-title text-left">`+ttest+`</h1>
             </div>
           </div>`;
     let elem6 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h6 class="text-left">Testing Data Updated at:</h2>
+              <h6 class="text-left">Testing Data Updated on:</h2>
               <h2 class="card-title text-left">`+utest+`</h1>
             </div>
           </div>`;
@@ -792,7 +792,7 @@ function buildIndiaTable(){
 
 function buildUKTable(){
   let ukData = JSON.parse(ls.getItem("ukDistrictWise"));
-  let ukDistricts = ["Chamoli","Dehradun","Haridwar","Pauri","Rudraprayag","Tehri Garhwal","Uttarkashi","Unknown"];
+  let ukDistricts = ["Chamoli","Dehradun","Haridwar","Pauri Garhwal","Rudraprayag","Tehri Garhwal","Uttarkashi","Unknown"];
   let ukDistrictWise = ukData.districtData;
   let dataArray = [];
   for(let k of ukDistricts){

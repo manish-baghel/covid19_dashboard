@@ -112,8 +112,11 @@ export function getIndiaHighlights(){
 	let tdn = stateWise[0]["deaths"];
 	let ncn = newCases[0]["confirmeddelta"];
 	let ndn = newCases[0]["deceaseddelta"];
-	let ttest = tested[tested.length-1]["totalindividualstested"];
+	let ttest = tested[tested.length-1]["totalsamplestested"];
 	let utest = tested[tested.length-1]["updatetimestamp"];
+	let a = utest.split("/");
+	[a[0],a[1]] = [a[1],a[0]];
+	utest = new Date(Date.parse(a.join("/"))).toDateString();
 	return {tcn,tdn,ncn,ndn,ttest,utest};
 }
 
@@ -148,12 +151,8 @@ export async function getData(){
       fetch(new_deaths_uri)
     ])
       .then(async response => {
-        let blobs = [await response[0].blob(),await response[1].blob(),await response[2].blob(),await response[3].blob()]
-        return blobs
-      })
-      .then(async blobs => {
-        let texts = [await blobs[0].text(),await blobs[1].text(),await blobs[2].text(),await blobs[3].text()]
-        return texts;
+        let texts = [await response[0].text(),await response[1].text(),await response[2].text(),await response[3].text()]
+        return texts
       })
       .then(async texts => {
         let tcases = await csv().fromString(texts[0])

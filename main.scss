@@ -141,6 +141,12 @@ a.kofi-button {
 	z-index:1000;
 }
 
+.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+    white-space: normal!important;
+}
+.tabulator .tabulator-header .tabulator-col{
+    min-height: 70px!important;
+}
 
 #linearScale{
 	box-shadow: none!important;
