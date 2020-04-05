@@ -318,7 +318,7 @@ function generateIndia(){
     });
     window.indmap = indmap;
 
-    let {tcn,tdn,ncn,ndn,ttest,utest} = data.getIndiaHighlights();
+    let {tcn,tdn,ncn,rec,ndn,ttest,utest} = data.getIndiaHighlights();
     let p = document.getElementById('india-info');
     let elem1 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
@@ -328,20 +328,20 @@ function generateIndia(){
           </div>`;
     let elem2 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h6 class="text-left">Total Deaths</h2>
-              <h2 class="card-title text-left">`+tdn+`</h1>
+              <h6 class="text-left">Total Recovered</h2>
+              <h2 class="card-title text-left">`+rec+`</h1>
             </div>
           </div>`;
     let elem3 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h6 class="text-left">New Confirmed Cases</h2>
-              <h2 class="card-title text-left">`+ncn+`</h1>
+              <h6 class="text-left">Total Deaths</h2>
+              <h2 class="card-title text-left">`+tdn+`</h1>
             </div>
           </div>`;
     let elem4 = `<div class="card mb-4 shadow-sm">
             <div class="card-body">
-              <h6 class="text-left">New Deaths</h2>
-              <h2 class="card-title text-left">`+ndn+`</h1>
+              <h6 class="text-left">New Confirmed Cases</h2>
+              <h2 class="card-title text-left">`+ncn+`</h1>
             </div>
           </div>`;
     let elem5 = `<div class="card mb-4 shadow-sm">
@@ -631,8 +631,8 @@ function buildIndiaTable(){
       name:o.state,
       tcases:o.confirmed
       tdeaths:o.deaths
-      ncases:o.delta.confirmed
-      ndeaths:o.delta.deaths,
+      ncases:o.deltaconfirmed
+      ndeaths:o.deltadeaths,
       rec:o.recovered,
       active:o.active
     }

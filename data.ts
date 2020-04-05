@@ -29,6 +29,11 @@ export function makeDictionary(){
 		else if(name.trim().toLowerCase()=="russian federation") name = "russia";
 		else if(name.trim().toLowerCase()=="united kingdom of great britain and northern ireland") name = "united kingdom";
 		else if(name.trim().toLowerCase()=="bolivia (plurinational state of)") name = "bolivia"; 
+		else if(name.trim().toLowerCase()=="iran (islamic republic of)") name = "iran";
+		else if(name.trim().toLowerCase()=="congo, democratic republic of the") name = "democratic republic of congo";
+		else if(name.trim().toLowerCase()=="venezuela (bolivarian republic of)") name = "venezuela";
+		else if(name.trim().toLowerCase()=="viet nam") name = "vietnam";
+		else if(name.trim().toLowerCase()=="korea, republic of") name = "south korea";
 		cdict[name.trim().toLowerCase()] = id;
 	}
 	return cdict;
@@ -88,18 +93,18 @@ export function getWorldHighlights(){
 
 export function getIndiaHighlights(){
 	let stateWise = JSON.parse(ls.getItem("indStateWise"));
-	let newCases = JSON.parse(ls.getItem("indNewCases"));	
 	let tested = JSON.parse(ls.getItem("indTested"));
 	let tcn = stateWise[0]["confirmed"];
 	let tdn = stateWise[0]["deaths"];
-	let ncn = newCases[0]["confirmeddelta"];
-	let ndn = newCases[0]["deceaseddelta"];
+	let ncn = stateWise[0]["deltaconfirmed"];
+	let ndn = stateWise[0]["deltadeaths"];
+	let rec = stateWise[0]["recovered"];
 	let ttest = tested[tested.length-1]["totalsamplestested"];
 	let utest = tested[tested.length-1]["updatetimestamp"];
 	let a = utest.split("/");
 	[a[0],a[1]] = [a[1],a[0]];
 	utest = new Date(Date.parse(a.join("/"))).toDateString();
-	return {tcn,tdn,ncn,ndn,ttest,utest};
+	return {tcn,tdn,ncn,rec,ndn,ttest,utest};
 }
 
 export function getUSHighlights(){
@@ -141,11 +146,9 @@ export function getIndiaData(){
 				.then(json => {
 					let timeSeries = json.cases_time_series;
 					let stateWise = json.statewise;
-					let newCases = json.key_values;
 					let tested = json.tested;
 					ls.setItem("indStateWise",JSON.stringify(stateWise));
 					ls.setItem("indTimeSeries",JSON.stringify(timeSeries));
-					ls.setItem("indNewCases",JSON.stringify(newCases));
 					ls.setItem("indTested",JSON.stringify(tested));
 				});
 }
