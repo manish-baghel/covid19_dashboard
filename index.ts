@@ -109,8 +109,10 @@ function plotGraph(){
 }
 
 function testObjCompare( a, b ) {
-    let val1 = parseInt(a["Total tests"].replace(/,/g, '').replace("","0"))
-    let val2 = parseInt(b["Total tests"].replace(/,/g, '').replace("","0"))
+    // let val1 = parseInt(a["Total tests"].replace(/,/g, '').replace("","0"))
+    // let val2 = parseInt(b["Total tests"].replace(/,/g, '').replace("","0"))
+    let val1 = a["Total tests"];
+    let val2 = b["Total tests"];
     if ( val1 < val2 ){
       return 1;
     }
@@ -123,27 +125,28 @@ async function plotTestingGraph(){
   let tdata;
   if(!ls.getItem('tdata')){
     console.log('fetching testing data....');
-    tdata = await scrapper.readTestData();
-    ls.setItem('tdata',JSON.stringify(tdata))
+    tdata = await scrapper.getNewTestingData();
+    ls.setItem('tdata',tdata)
   }else{
     tdata = JSON.parse(ls.getItem('tdata'));
   }
   var ctx = document.getElementById('testingChart');
   let labels = []
   let data = []
-  let tarr = tdata[0];
+  let tarr = tdata;
   tarr.sort(testObjCompare);
   let minValue = 0;
-  let maxValue = parseInt(tarr[0]["Total tests"].replace(/,/g, '').replace("","0"))
+  let maxValue = tarr[0]["Total tests"];
+  // let maxValue = tarr[tarr.length-1]["Total tests"]; // reverse sorting order
   var paletteScale = d3.scalePow()
             .exponent(0.5)
             .domain([minValue,maxValue])
-            .range(['#ffefeb','#560001']);
+            .range(['#ffebef','#bf0000']);
   let colorPalette = [];
   for(let obj of tarr){
-    labels.push(obj["Country or territory"]);
-    data.push(obj["Total tests"].replace(/,/g, '').replace("","0"));
-    colorPalette.push(paletteScale(parseInt(obj["Total tests"].replace(/,/g, '').replace("","0"))))
+    labels.push(obj["name"]);
+    data.push(obj["Total tests"]);
+    colorPalette.push(paletteScale(obj["Total tests"]));
   }
   var myBarChart = new Chart(ctx, {
     type: 'horizontalBar',
