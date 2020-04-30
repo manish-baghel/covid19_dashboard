@@ -25,7 +25,7 @@
     "feather-icons": "^4.26.0",
     "html-table-to-json": "^1.0.0",
     "i18n-iso-countries": "^5.1.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "jssoup": "0.0.11",
     "parcel-bundler": "^1.12.4",
     "popper.js": "^1.16.1",
