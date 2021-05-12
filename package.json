@@ -16,7 +16,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.12.1",
     "bootstrap": "^4.4.1",
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "csv-parser": "^2.3.2",
     "csvtojson": "^2.0.10",
     "d3": "^5.15.0",
